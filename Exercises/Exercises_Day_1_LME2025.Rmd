@@ -1,0 +1,75 @@
+---
+title: "Exercises Day 1"
+author: "Your name"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+
+```
+
+
+# Exercise 1
+
+Suppose you are running a behavioural experiment, studying the mental speed of young and old people. You know that young people have an average reaction time of 550 with a standart deviation of 120.
+
+a) What is the probability of getting a reaction time of 420 or lower from a single young person?
+
+```{r Ex1a, include=TRUE}
+
+
+```
+b) What is the probability of getting a reaction time of 560 or higher from a single young person?
+```{r Ex1b, include=TRUE}
+
+
+```
+
+c) For your study, you need 10 reaction time values for young people. How can you generate a sample with n = 10?
+```{r Ex1c, include=TRUE}
+
+```
+
+d) You get 15 values from a population of old people. What is the mean and the standart deviation of their underlying normal distribution?
+```{r Ex1d, include=TRUE}
+x <- c(434.7, 671.4, 428.9, 454.4, 806.1, 483.3, 819.1, 630.4, 836.2, 661.4, 511.7, 507.2, 568.0, 707.9, 621.7)
+
+```
+
+e) What is the probability that the 15 values are actually drawn from the same distribution as in 1c
+```{r Ex1e, include=TRUE}
+
+
+```
+
+# Exercise 2
+
+You are a researcher studying the intelligence of dragons in the european mountains. You suspect that larger dragons are also smarter and you've collected various samples for intelligence (testscore) and size (bodylength) from different mountains.
+
+a) Is there a significant relationship between intelligence and body size in dragons? Use linear regression.
+
+```{r Ex2a, include=TRUE}
+load("dragons.RData")
+
+
+```
+
+b) Maybe the location of each recording sample influences the results. Create a LME that accounts for differences between mountain ranges. What is the relationship between intelligence and body size now?
+
+```{r Ex2b, include=TRUE}
+
+
+```
+
+c) You notice that dragons with different colors behave differently. Control in your LME for the color of each dragon. How do the results change?
+
+```{r Ex2c, include=TRUE}
+
+
+```
