@@ -1,0 +1,77 @@
+---
+title: "Exercises Day 2"
+author: "Your name"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+library(car)
+## be careful to load dplyr after MASS
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+# To solve some conflicts between packages:
+select <- dplyr::select
+
+```
+
+
+# Exercise 1
+
+You performed a cognitive experiment with a pre- and post-test design. Participants completed one session before language training and one session after language training, with two types of training: Forced and Voluntary. The identical set switching task was used for pre- and post-test. Within each switching task reaction times from pure blocks are compared to switch/repeat blocks, with the expectation that participants react faster in pure blocks than non-pure blocks.
+
+a) Prepare the data set for use in a LME. Create a new 2-level variable called BlockType that compares pure trials against non-pure trial.
+
+```{r Ex1a, include=TRUE}
+load("CogTrainingData.RData")
+
+```
+
+b) Create a linear mixed effects model that tests whether there was a significant effect in the cognitive test performance for BlockType. Control for individual effects of Subject and Items.
+
+```{r Ex1b, include=TRUE}
+
+```
+c) Given that there were two sessions of the cognitive test, before and after training, and there were two types of training, create a new model that accounts for all three variables. Which fixed effects are significant?
+
+
+```{r Ex1c, include=TRUE}
+
+```
+
+d) You also have information regarding the age for each participant. Create a model that includes this covariate as a fixed effect. Did the outcome of the model change compared to 1a? What might be possible reasons for this?
+
+```{r Ex1d, include=TRUE}
+
+
+```
+# Exercise 2
+
+Verify the assumptions of LMEs for the last model involving age as a covariate
+
+a) Is the dependant variable lineary related to the residuals?
+```{r Ex2a, include=TRUE}
+
+
+```
+b) Test for constant variance in the residuals.
+```{r Ex2b, include=TRUE}
+
+
+```
+
+c) Test for normal distributed residuals.
+```{r Ex2c, include=TRUE}
+
+
+```
+
+d) Test for multicollinearity. Which effects are correlated with each other and what might be the reason?
+```{r Ex2d, include=TRUE}
+
+
+```
