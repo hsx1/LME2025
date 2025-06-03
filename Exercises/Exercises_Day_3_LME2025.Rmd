@@ -1,0 +1,55 @@
+---
+title: "Exercises Day 3"
+author: "Your name"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+library(car)
+## be careful to load dplyr after MASS
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+# To solve some conflicts between packages:
+select <- dplyr::select
+
+unloadNamespace("lmerTest")
+
+```
+
+
+# Exercise 1
+a) Yesterday, we created two models for the cognitive training study, one with age and one without. Use the model provided below and compare its fit with and without Age as a fixed effect.
+```{r Ex1a, include=TRUE}
+load("CogTrainingData.RData")
+
+Model_1 = lmer(RT ~ TrialType*Session*Group + Age + (1 | Subject) + (1 | Item), data=Cog_training_Data)
+
+```
+
+b) You have another variable called Gender and you would like to control for it as a random slope. To reduce the complexity of the model, you also focus only on the forced training group and create a new model for them. How would you add Gender to the new model and does its inclusion change the fit of the model?
+```{r Ex1b, include=TRUE}
+
+
+```
+
+c) You created the maximal model below, but it does not converge. Try to reduce its complexity until it converges. What model do you end up with?
+
+```{r Ex1c1, include=FALSE}
+Model_5 = lmer(RT ~ TrialType*Session*Group + Age + SES + (1 + Session| Subject) + (1 + Session*Group + Age + SES| Item), data=Cog_training_Data)
+summary(Model_5)
+```
+Running the model above takes alot of time so I recommend only running it in a seperate chunk in order to not restart it every time for this exercise.
+
+```{r Ex1c2, include=TRUE}
+
+```
+# Exercise 2
+Use lmerTest to see the output of Model 1 in exercise 1a. How did the output change what do the new values represent. Explain the output for the variables Session and Age.
+```{r Ex2a, include=TRUE}
+
+```
