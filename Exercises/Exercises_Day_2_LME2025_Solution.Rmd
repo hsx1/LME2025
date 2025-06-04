@@ -1,0 +1,94 @@
+---
+title: "Exercises Day 2"
+author: "Your name"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+library(car)
+## be careful to load dplyr after MASS
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+# To solve some conflicts between packages:
+select <- dplyr::select
+
+```
+
+
+# Exercise 1
+
+You performed a cognitive experiment with a pre- and post-test design. Participants completed one session before language training and one session after language training, with two types of training: Forced and Voluntary. The identical set switching task was used for pre- and post-test. Within each switching task reaction times from pure blocks are compared to switch/repeat blocks, with the expectation that participants react faster in pure blocks than non-pure blocks.
+
+a) Prepare the data set for use in a LME. Create a new 2-level variable called BlockType that compares pure trials against non-pure trial.
+
+```{r Ex1a, include=TRUE}
+load("CogTrainingData.RData")
+
+Model_Data <-
+  Cog_training_Data %>%
+  mutate(BlockType = ifelse(TrialType == "pure", 0, 1))
+
+```
+
+b) Create a linear mixed effects model that tests whether there was a significant effect in the cognitive test performance for BlockType. Control for individual effects of Subject and Items.
+
+```{r Ex1b, include=TRUE}
+Model_BlockType = lmer(RT ~ BlockType + (1 | Subject) + (1 | Item), data=Model_Data)
+
+summary(Model_BlockType)
+```
+c) Given that there were two sessions of the cognitive test, before and after training, and there were two types of training, create a new model that accounts for all three variables. Which fixed effects are significant?
+
+
+```{r Ex1c, include=TRUE}
+Model_Large = lmer(RT ~ BlockType*Session*Group + (1 | Subject) + (1 | Item), data=Model_Data)
+
+summary(Model_Large)
+```
+The significant effects are BlockType, Session and BlockType:Session as all three have a t-value greater than abs(2).
+
+d) You also have information regarding the age for each participant. Create a model that includes this covariate as a fixed effect. Did the outcome of the model change compared to 1a? What might be possible reasons for this?
+
+```{r Ex1d, include=TRUE}
+Model_Age = lmer(RT ~ BlockType*Session*Group + Age + (1 | Subject) + (1 | Item), data=Model_Data)
+
+summary(Model_Age)
+
+```
+The fixed effects remained significant, however the t-values got slightly smaller, as a result of including an additional fixed effect. By accounting for more effects in the model, data variability is "distributed" between more variables, reducing the effects in single variables in comparison.
+
+# Exercise 2
+
+Verify the assumptions of LMEs for the last model involving age as a covariate
+
+a) Is the dependant variable lineary related to the residuals?
+```{r Ex2a, include=TRUE}
+plot(resid(Model_Age), Model_Data$RT)
+
+```
+Yes, there is a linear relationship between residuals and RT
+
+b) Test for constant variance in the residuals.
+```{r Ex2b, include=TRUE}
+plot(fitted(Model_Age), resid(Model_Age))
+
+```
+
+c) Test for normal distributed residuals.
+```{r Ex2c, include=TRUE}
+res_model <- residuals(Model_Age)
+qqnorm(res_model)
+
+```
+
+d) Test for multicollinearity. Which effects are correlated with each other and what might be the reason?
+```{r Ex2d, include=TRUE}
+vif(Model_Age)
+
+```
+BlockType and its interactions show high correlation as BlockType is used within all of those interactions.
