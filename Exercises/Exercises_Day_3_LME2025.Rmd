@@ -27,29 +27,82 @@ a) Yesterday, we created two models for the cognitive training study, one with a
 ```{r Ex1a, include=TRUE}
 load("CogTrainingData.RData")
 
-Model_1 = lmer(RT ~ TrialType*Session*Group + Age + (1 | Subject) + (1 | Item), data=Cog_training_Data)
+model_age = lme4::lmer(RT ~ TrialType*Session*Group + Age + (1 | Subject) + (1 | Item), data=Cog_training_Data)
+
+model_no_age = lme4::lmer(RT ~ TrialType*Session*Group + (1 | Subject) + (1 | Item), data=Cog_training_Data)
+
+summary(model_age)
+summary(model_no_age)
+
+anova(model_age, model_no_age)
 
 ```
+There is essentially no difference for adding age or leaving it out.
+
 
 b) You have another variable called Gender and you would like to control for it as a random slope. To reduce the complexity of the model, you also focus only on the forced training group and create a new model for them. How would you add Gender to the new model and does its inclusion change the fit of the model?
-```{r Ex1b, include=TRUE}
 
+```{r Ex1b, include=TRUE}
+df <- Cog_training_Data %>% 
+  dplyr::filter(.data$Group == "Forced")
+
+model <- lme4::lmer(RT ~ TrialType*Session + Age + (1 | Subject) + (1 | Item), data=df)
+model_gender <- lme4::lmer(RT ~ TrialType*Session + Age + (1 | Subject) + (1 + Gender | Item), data=df)
+
+summary(model)
+anova(model, model_gender)
 
 ```
+
+Adding Gender as a random slope essentially makes no difference.
+
 
 c) You created the maximal model below, but it does not converge. Try to reduce its complexity until it converges. What model do you end up with?
 
 ```{r Ex1c1, include=FALSE}
-Model_5 = lmer(RT ~ TrialType*Session*Group + Age + SES + (1 + Session| Subject) + (1 + Session*Group + Age + SES| Item), data=Cog_training_Data)
-summary(Model_5)
+model = lme4::lmer(RT ~ TrialType*Session*Group + Age + SES + (1 + Session || Subject) + (1 + Session*Group + Age + SES| Item), data=Cog_training_Data)
+summary(model)
 ```
+
+
+```{r Ex1c1, include=FALSE}
+model_r1 = lme4::lmer(RT ~ TrialType*Session*Group + Age + SES + (1 + Session| Subject) + (1 + Session*Group + SES| Item), data=Cog_training_Data)
+summary(model_r1)
+```
+
+
+```{r Ex1c1, include=FALSE}
+model_r2 = lme4::lmer(RT ~ TrialType*Session*Group + Age + SES + (1 + Session| Subject) + (0 + Session*Group + SES| Item), data=Cog_training_Data)
+summary(model_r2)
+```
+
+```{r Ex1c1, include=FALSE}
+model_r3 = lmer(RT ~ TrialType*Session*Group + Age + SES + (1 + Session| Subject) + (0 + Session*Group | Item), data=Cog_training_Data)
+summary(model_r3)
+```
+
+```{r Ex1c1, include=FALSE}
+model_r4 = lmer(RT ~ TrialType*Session*Group + Age + SES + (1 + Session| Subject) + (0 + Group | Item), data=Cog_training_Data)
+summary(model_r4)
+```
+
+Final model is model 4
+
+
 Running the model above takes alot of time so I recommend only running it in a seperate chunk in order to not restart it every time for this exercise.
 
-```{r Ex1c2, include=TRUE}
-
-```
 # Exercise 2
 Use lmerTest to see the output of Model 1 in exercise 1a. How did the output change what do the new values represent. Explain the output for the variables Session and Age.
 ```{r Ex2a, include=TRUE}
+
+model_age = lme4::lmer(RT ~ TrialType*Session*Group + Age + (1 | Subject) + (1 | Item), data=Cog_training_Data)
+model_age_recode = lme4::lmer(RT ~ TrialType*as.factor(Session)*Group + Age + (1 | Subject) + (1 | Item), data=Cog_training_Data)
+
+
+
+model_age2 = lmerTest::lmer(RT ~ TrialType*Session*Group + Age + (1 | Subject) + (1 | Item), data=Cog_training_Data)
+
+summary(model_age)
+summary(model_age2)
 
 ```
