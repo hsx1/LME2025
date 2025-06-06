@@ -1,0 +1,88 @@
+---
+title: "Exercises Day 4"
+author: "Your name"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+library(car)
+
+## be careful to load dplyr after MASS
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+library(emmeans)
+
+# To solve some conflicts between packages:
+select <- dplyr::select
+
+```
+
+# Exercise 1
+
+a) We are using the cognitive training data set from the previous days. 
+
+Please use the final reduced model from Day 3 1c and create three versions with different contrast-coding for the Group variable:
+* One with treamtent contrasts
+* One with sum contrasts using -0.5/0.5
+* One with sum contrasts using -1/1
+
+How does the model output change between the three version and what does the estimate for Group represent?
+
+```{r Ex1a, include=TRUE}
+load("CogTrainingData.RData")
+
+Cog_training_Data$Group <- factor(Cog_training_Data$Group, level = c("Forced", "Voluntary"), labels=c("Forced", "Voluntary"))
+contrasts(Cog_training_Data$Group) <- contr.treatment(2)
+
+model_treatment <- lme4::lmer(RT ~ TrialType*Session*Group + Age + SES + (1| Subject) + (1 | Item), data=Cog_training_Data)
+
+summary(model_treatment)
+```
+
+```{r Ex1a, include=TRUE}
+load("CogTrainingData.RData")
+
+contrasts(Cog_training_Data$Group) <- contr.sum(2)/2
+model_treatment <- lme4::lmer(RT ~ TrialType*Session*Group + Age + SES + (1| Subject) + (1 | Item), data=Cog_training_Data)
+
+summary(model_treatment)
+```
+
+```{r Ex1a, include=TRUE}
+contrasts(Cog_training_Data$Group) <- contr.sum(2)
+model_treatment <- lme4::lmer(RT ~ TrialType*Session*Group + Age + SES + (1| Subject) + (1 | Item), data=Cog_training_Data)
+
+summary(model_treatment)
+```
+
+
+```{r Ex1a, include=TRUE}
+load("CogTrainingData.RData")
+
+contr.treatment(Cog_training_Data$Group)
+model_treatment <- lme4::lmer(RT ~ TrialType*Session*Group + Age + SES + (1| Subject) + (1 | Item), data=Cog_training_Data)
+
+```
+
+b) You are interested in the threeway interaction between TrialType, Session and Group in your model and want to understand the underlying comparisons and estimated marginal means for each coefficent combination. How would you get this information?
+
+```{r Ex1b, include=TRUE}
+em <- emmeans::emmeans(model_treatment, pairwise ~ TrialType:Session:Group)
+em
+```
+
+# Exercise 2
+Using the cognitive training data set, you came up with a new hypothesis regarding age. You predict that there might be no quantitative, but qualitative differences between different age groups. Specifically, you predict that "middle-age" people show faster reaction times in the Pure-Block condition compared to the non-pure block condition, while "young" and "old" people show slower reaction times.
+
+Create a new categorical variable with three levels for "young" (20 to 24), "middle-aged" (25 to 29) and "old" people (30 to 33).
+
+Create a new model to test your hypothesis. How would you dummy-code the new age variable in order to test your hypothesis?
+
+```{r Ex2, include=TRUE}
+
+```
