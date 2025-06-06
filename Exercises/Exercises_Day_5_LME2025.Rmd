@@ -1,0 +1,61 @@
+---
+title: "Exercises Day 5"
+author: "Your name"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+library(car)
+## be careful to load dplyr after MASS
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+library(simr)
+library(ggeffects)
+library(lmerTest)
+# To solve some conflicts between packages:
+select <- dplyr::select
+```
+
+# Exercise 1
+Using the model above from previous exercises, plot the predicted effects for the Session fixed effect, the predicted effects for the the interaction between Session and BlockType as well as the threeway interaction between Session, BlockType and Group. Include confidence intervals as well as correct axis labeling. Also remember that RT was transformed for the model above, but that the plots should be shown in milliseconds.
+
+```{r Ex1, include=TRUE}
+load("CogTrainingData.RData")
+
+CogModelData <-
+  Cog_training_Data %>%
+  mutate(trans_RT = 1/(RT)) %>%
+  mutate(Session = as.factor(Session)) %>%
+  mutate(Group = as.factor(Group)) %>%
+  mutate(BlockType = as.factor(ifelse(TrialType == "pure", "pure", "non-pure")))
+
+contrasts(CogModelData$Session)
+contrasts(CogModelData$Group) <- contr.sum(2)/2
+contrasts(CogModelData$Group)
+contrasts(CogModelData$BlockType) <- contr.sum(2)/2
+contrasts(CogModelData$BlockType)
+
+Model_10 = lmer(trans_RT ~ BlockType*Group*Session + (1| Subject) + (1| Item), data=CogModelData)
+summary(Model_10)
+```
+
+```{r Ex1b, include=TRUE}
+
+
+```
+# Exercise 2
+a) What is the power of the BlockType Session interaction in the model used in exercise 1a for the session effect, when testing for 10 simulations?
+
+```{r Ex2a, include=TRUE, warning=FALSE}
+
+```
+b) Currently the data set has 44 subjects. What would be the power of the Blocktype Session interaction with only 20 subjects?
+
+```{r Ex2b, include=TRUE, warning=FALSE}
+
+```
